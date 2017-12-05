@@ -110,7 +110,6 @@ void chip8_timers(){
 
 void chip8_emulate() {
     Uint8 * keys;
-    int vx, vy, height;
 
     // Make it super fast
     for (int times = 0; times < 10; times++) {
@@ -247,10 +246,11 @@ void chip8_emulate() {
                 chip8.V[(chip8.opcode & 0x0F00) >> 8] = rand() & (chip8.opcode & 0x00FF);
                 chip8.pc += 2;
                 break;
-            case 0xD000: // Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels
-                vx = chip8.V[(chip8.opcode & 0x0F00) >> 8];
-                vy = chip8.V[(chip8.opcode & 0x00F0) >> 4];
-                height = chip8.opcode & 0x000F;
+            case 0xD000:; // Draws a sprite at coordinate (VX, VY) that has a width of 8 pixels and a height of N pixels
+                // A label can only be part of a statement and a declaration is not a statement
+                int vx = chip8.V[(chip8.opcode & 0x0F00) >> 8];
+                int vy = chip8.V[(chip8.opcode & 0x00F0) >> 4];
+                int height = chip8.opcode & 0x000F;
                 chip8.V[0xF] &= 0;
 
                 for (int y = 0; y < height; y++) {
@@ -350,15 +350,15 @@ void chip8_emulate() {
 }
 
 void chip8_draw() {
-    int i, j;
     SDL_Surface * surface = SDL_GetVideoSurface();
     SDL_LockSurface(surface);
     Uint32 * screen = (Uint32 *)surface->pixels;
     memset(screen,0,surface->w*surface->h*sizeof(Uint32));
-    for (i = 0; i < SCREEN_H; i++)
-        for (j = 0; j < SCREEN_W; j++){
+    for (int i = 0; i < SCREEN_H; i++) {
+        for (int j = 0; j < SCREEN_W; j++) {
             screen[j+i*surface->w] = chip8.graphics[(j/10)+(i/10)*64] ? 0xFFFFFFFF : 0;
         }
+    }
 
     SDL_UnlockSurface(surface);
     SDL_Flip(surface);
@@ -401,7 +401,6 @@ void chip8_run(char *file_name) {
             }
         }
 
-
         chip8_emulate();
         chip8_draw();
         chip8_prec(file_name, &event);
@@ -410,8 +409,6 @@ void chip8_run(char *file_name) {
 
 
 int main(int argc, char *argv[]) {
-
-
     char *file_name = "";
 
     // Parameter parsing

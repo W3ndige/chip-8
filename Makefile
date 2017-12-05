@@ -5,4 +5,4 @@ clean:
 	rm main
 
 tests: chip8
-	./chip8 -f './c8games/MERLIN'
+	./chip8 -f './c8games/UFO'
